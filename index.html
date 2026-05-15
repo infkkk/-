@@ -1,42 +1,137 @@
----
-name: frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.
-license: Complete terms in LICENSE.txt
----
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>你是哪种人</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Serif SC', Georgia, serif;
+  background: #0a0a0f;
+  color: #e8e4dc;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+.container { max-width: 680px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.header h1 { font-size: 2rem; font-weight: 700; letter-spacing: 0.08em; color: #f0ebe0; margin-bottom: 0.4rem; }
+.header p { font-size: 0.85rem; color: #7a7265; letter-spacing: 0.12em; }
+.progress-bar { height: 2px; background: rgba(255,255,255,0.07); border-radius: 2px; margin-bottom: 2rem; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #c9a96e, #e8d5a3); border-radius: 2px; transition: width 0.4s ease; }
+.question-block { margin-bottom: 2rem; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.question-num { font-size: 0.7rem; letter-spacing: 0.2em; color: #c9a96e; margin-bottom: 0.6rem; }
+.question-text { font-size: 1.1rem; font-weight: 600; color: #f0ebe0; line-height: 1.6; margin-bottom: 1.2rem; }
+.options { display: flex; flex-direction: column; gap: 0.6rem; }
+.option { padding: 0.85rem 1.1rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; cursor: pointer; font-size: 0.92rem; color: #c4bfb3; background: rgba(255,255,255,0.03); transition: all 0.2s ease; text-align: left; font-family: inherit; }
+.option:hover { border-color: rgba(201,169,110,0.5); background: rgba(201,169,110,0.06); color: #e8d5a3; }
+.option.selected { border-color: #c9a96e; background: rgba(201,169,110,0.12); color: #e8d5a3; }
+.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+.btn { padding: 0.6rem 1.4rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; letter-spacing: 0.06em; font-family: inherit; transition: all 0.2s; }
+.btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.12); color: #7a7265; }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.25); color: #c4bfb3; }
+.btn-primary { background: #c9a96e; border: none; color: #0a0a0f; font-weight: 600; }
+.btn-primary:hover { background: #e8d5a3; }
+.btn-primary:disabled { background: rgba(201,169,110,0.2); color: #4a4540; cursor: default; }
+.result-card { animation: fadeIn 0.5s ease; text-align: center; padding: 1rem 0; }
+.result-emoji { font-size: 4rem; margin-bottom: 1rem; display: block; }
+.result-label { font-size: 0.7rem; letter-spacing: 0.2em; color: #c9a96e; margin-bottom: 0.5rem; }
+.result-title { font-size: 2rem; font-weight: 700; color: #f0ebe0; margin-bottom: 1.5rem; }
+.result-divider { width: 40px; height: 1px; background: #c9a96e; margin: 0 auto 1.5rem; }
+.result-desc { font-size: 0.95rem; line-height: 1.9; color: #b0aa9e; max-width: 520px; margin: 0 auto 1.5rem; text-align: left; }
+.traits { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
+.trait { padding: 0.3rem 0.8rem; border: 1px solid rgba(201,169,110,0.3); border-radius: 20px; font-size: 0.78rem; color: #c9a96e; }
+.btn-retry { padding: 0.7rem 2rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: #7a7265; font-family: inherit; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+.btn-retry:hover { border-color: rgba(255,255,255,0.25); color: #c4bfb3; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>你是哪种人</h1>
+    <p>一份关于社会坐标的测试</p>
+  </div>
+  <div id="quiz-area"></div>
+</div>
+<script>
+const questions = [
+  { text: "周末突然有了一整天自由时间，你的第一反应是？", options: [{ text: "约几个朋友出去，一个人待着太无聊了", scores: [0,2,3,0,0,0,1,0] },{ text: "终于可以推进一直搁置的个人项目了", scores: [0,0,0,0,0,3,0,0] },{ text: "什么都不做，发呆、睡觉、让身体休息", scores: [0,0,0,3,0,0,0,0] },{ text: "先看看有没有人需要帮忙，顺带安排自己", scores: [0,0,0,0,0,0,3,0] }] },
+  { text: "朋友圈里有人发了一个明显错误的观点，你会？", options: [{ text: "直接评论指出来，错的就是错的", scores: [0,0,0,0,3,0,0,1] },{ text: "截图发给另一个朋友吐槽", scores: [2,0,1,0,0,0,0,0] },{ text: "没必要，划过去就好了", scores: [0,0,0,2,1,0,0,0] },{ text: "私信对方，不想在公开场合让他难堪", scores: [0,0,0,0,0,0,3,0] }] },
+  { text: "你在一个陌生聚会上，最可能出现在哪里？", options: [{ text: "跟不同的人聊天，感受各种人的能量", scores: [0,0,3,0,0,0,0,0] },{ text: "找个角落观察全场，偶尔参与", scores: [2,0,0,1,0,0,0,0] },{ text: "认真和一两个有意思的人深聊", scores: [0,2,0,2,0,1,0,0] },{ text: "帮主人招呼客人，顺便活跃气氛", scores: [0,0,0,0,0,0,3,0] }] },
+  { text: "领导交给你一个你不认同方向的任务，你会？", options: [{ text: "先做，同时找机会表达自己的看法", scores: [1,0,0,0,2,0,1,0] },{ text: "直接说出来，这个方向有问题", scores: [0,2,0,0,0,0,0,3] },{ text: "照做，但私下会记着这件事", scores: [2,0,0,0,1,0,0,0] },{ text: "找到双方都能接受的折中方案", scores: [0,0,1,0,0,0,3,0] }] },
+  { text: "你最认同哪句话？", options: [{ text: "人与人之间，最重要的是真诚", scores: [0,3,0,0,0,0,1,0] },{ text: "规则是死的，人是活的", scores: [2,0,0,0,0,0,0,3] },{ text: "数据和事实比感觉更可靠", scores: [0,0,0,1,3,0,0,0] },{ text: "每个人都有自己的故事，不该轻易评判", scores: [0,0,2,0,0,0,2,0] }] },
+  { text: "你在一个项目里，最擅长做什么？", options: [{ text: "协调各方关系，让团队顺畅运转", scores: [1,0,2,0,0,0,3,0] },{ text: "提出别人没想到的角度或方案", scores: [0,1,0,0,0,3,0,2] },{ text: "独立执行，靠谱完成自己的部分", scores: [0,0,0,3,2,0,0,0] },{ text: "看穿项目里的潜在问题，提前规避", scores: [3,0,0,0,1,0,0,0] }] },
+  { text: "面对人生中一个重要决定，你通常怎么做？", options: [{ text: "分析利弊，列出清单，理性评估", scores: [0,0,0,0,3,0,0,0] },{ text: "问朋友意见，但最终靠感觉", scores: [0,1,2,0,0,1,1,0] },{ text: "跟着直觉走，事后再复盘", scores: [0,2,0,0,0,2,0,2] },{ text: "拖一拖，等待时机自然清晰", scores: [2,0,0,2,0,0,0,0] }] },
+  { text: "别人对你的评价里，哪个最让你觉得「说到点子上」？", options: [{ text: "「你看人很准」", scores: [3,0,0,0,1,0,0,0] },{ text: "「你很有自己的想法」", scores: [0,2,0,1,0,2,0,2] },{ text: "「你在哪里都能打成一片」", scores: [0,0,3,0,0,0,1,0] },{ text: "「你很可靠，我们都信任你」", scores: [0,0,1,0,2,0,3,0] }] },
+  { text: "你最害怕哪种状态？", options: [{ text: "被人看透，失去神秘感", scores: [3,0,0,0,0,0,0,0] },{ text: "变成一个「正常人」，和所有人一样", scores: [0,2,0,0,0,1,0,3] },{ text: "必须依赖别人才能完成事情", scores: [0,0,0,3,1,0,0,0] },{ text: "伤害到别人却浑然不知", scores: [0,1,0,0,0,0,3,0] }] },
+  { text: "如果可以选择，你理想的工作方式是？", options: [{ text: "自由职业，时间和空间完全自主", scores: [0,1,0,2,0,3,0,1] },{ text: "有明确目标和框架，自己负责执行", scores: [0,0,0,1,3,0,0,0] },{ text: "小而精的团队，大家都信任彼此", scores: [0,2,1,0,0,0,2,0] },{ text: "在复杂的组织里找到自己的位置", scores: [3,0,1,0,0,0,0,0] }] }
+];
 
-This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
+const results = [
+  { emoji: "🦊", title: "老江湖", traits: ["看透不说破","信息嗅觉强","处事老练"], desc: "你活得像一本厚厚的社会教材。你看人准，懂分寸，知道什么话在什么场合说。你不是冷漠，而是早就明白了世界的运作方式——有些事不值得解释，有些人不值得说服。你的沉默有时比话语更有力量，只有真正懂你的人才知道你在观察什么。" },
+  { emoji: "🌱", title: "理想主义者", traits: ["热血","有信仰","容易失望"], desc: "你还没有放弃相信「世界可以更好」。你对虚伪敏感，对真诚有执念，哪怕现实一次次给你泼冷水，你还是会在某个角落重新燃起来。有人说你天真，但你知道：失去这份天真，你就不是你了。" },
+  { emoji: "🎭", title: "社交变色龙", traits: ["适应力极强","八面玲珑","难以捉摸"], desc: "你能在任何场合找到属于自己的频道——和艺术圈的人聊创作，和商界的人谈策略，跟基层的人唠家常，全都毫无违和感。但有时候你也会想：哪一个才是真正的自己？也许，这种流动性本身就是你的答案。" },
+  { emoji: "🏔️", title: "独行侠", traits: ["自给自足","边界清晰","不需要掌声"], desc: "你不依赖热闹，也不害怕孤独。你的内心世界足够丰富，足以在无人陪伴的情况下走很长的路。你不是冷漠，你只是早就学会了如何和自己相处。能真正走进你世界的人不多，但能进来的，都知道你有多深。" },
+  { emoji: "📊", title: "务实派", traits: ["逻辑清晰","目标导向","不绕弯子"], desc: "你用效率衡量一切，用结果说话。在你看来，情绪是可以管理的变量，问题是可以被拆解的系统。你不是没有感情，只是更相信行动的力量。你身边的人知道：只要你说「没问题」，那就真的没问题。" },
+  { emoji: "🎨", title: "野生创作者", traits: ["脑洞无限","执行混乱","灵感型选手"], desc: "你的脑子里永远有一个正在孵化的想法。有时候是一个产品、一段故事、一种活法——你对「创造」本身有近乎本能的渴望。执行力可能是你的短板，但你的优势在于：你总能看到别人还没看到的可能性。" },
+  { emoji: "🕊️", title: "和事佬", traits: ["共情力强","照顾他人","容易忽视自己"], desc: "你是人群中的情绪锚点——有你在的地方，冲突会软化，气氛会回暖。你天生对别人的感受敏感，总是在别人开口之前就感知到需求。但有时候也要记得：你自己的感受，也值得被认真对待。" },
+  { emoji: "🌀", title: "反骨仔", traits: ["质疑一切","走偏门","天生反叛"], desc: "「大家都这样做」对你来说不是理由，反而是警觉的信号。你对权威、规则、共识天生有一种摩擦感——不是为了叛逆而叛逆，而是你真的想搞清楚：这些规则凭什么？走另一条路不一定更轻松，但对你来说更真实。" }
+];
 
-The user provides frontend requirements: a component, page, application, or interface to build. They may include context about the purpose, audience, or technical constraints.
+let current = 0;
+let answers = new Array(questions.length).fill(-1);
 
-## Design Thinking
+function render() {
+  const area = document.getElementById('quiz-area');
+  if (current >= questions.length) { showResult(area); return; }
+  const q = questions[current];
+  const progress = (current / questions.length) * 100;
+  area.innerHTML = `
+    <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+    <div class="question-block">
+      <div class="question-num">问题 ${current + 1} / ${questions.length}</div>
+      <div class="question-text">${q.text}</div>
+      <div class="options">
+        ${q.options.map((o,i) => `<button class="option ${answers[current]===i?'selected':''}" onclick="selectOption(${i})">${o.text}</button>`).join('')}
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-ghost" onclick="goBack()" ${current===0?'style="visibility:hidden"':''}>← 上一题</button>
+      <button class="btn btn-primary" id="next-btn" onclick="goNext()" ${answers[current]===-1?'disabled':''}>
+        ${current===questions.length-1?'查看结果':'下一题 →'}
+      </button>
+    </div>`;
+}
 
-Before coding, understand the context and commit to a BOLD aesthetic direction:
-- **Purpose**: What problem does this interface solve? Who uses it?
-- **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
-- **Constraints**: Technical requirements (framework, performance, accessibility).
-- **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
+function selectOption(i) {
+  answers[current] = i;
+  document.querySelectorAll('.option').forEach((el,idx) => el.classList.toggle('selected', idx===i));
+  document.getElementById('next-btn').disabled = false;
+}
 
-**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work - the key is intentionality, not intensity.
+function goNext() { if (answers[current]===-1) return; current++; render(); }
+function goBack() { if (current>0) { current--; render(); } }
 
-Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
-- Production-grade and functional
-- Visually striking and memorable
-- Cohesive with a clear aesthetic point-of-view
-- Meticulously refined in every detail
+function showResult(area) {
+  const totals = new Array(8).fill(0);
+  answers.forEach((ans,qi) => { if (ans===-1) return; questions[qi].options[ans].scores.forEach((s,i) => totals[i]+=s); });
+  const winner = totals.indexOf(Math.max(...totals));
+  const r = results[winner];
+  area.innerHTML = `
+    <div class="result-card">
+      <span class="result-emoji">${r.emoji}</span>
+      <div class="result-label">你的社会身份</div>
+      <div class="result-title">${r.title}</div>
+      <div class="result-divider"></div>
+      <div class="result-desc">${r.desc}</div>
+      <div class="traits">${r.traits.map(t=>`<span class="trait">${t}</span>`).join('')}</div>
+      <button class="btn-retry" onclick="restart()">重新测试</button>
+    </div>`;
+}
 
-## Frontend Aesthetics Guidelines
-
-Focus on:
-- **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics; unexpected, characterful font choices. Pair a distinctive display font with a refined body font.
-- **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
-- **Motion**: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
-- **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
-- **Backgrounds & Visual Details**: Create atmosphere and depth rather than defaulting to solid colors. Add contextual effects and textures that match the overall aesthetic. Apply creative forms like gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, and grain overlays.
-
-NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
-
-Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices (Space Grotesk, for example) across generations.
-
-**IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
-
-Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+function restart() { current=0; answers=new Array(questions.length).fill(-1); render(); }
+render();
+</script>
+</body>
+</html>
